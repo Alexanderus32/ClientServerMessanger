@@ -3,7 +3,7 @@
 
 Клиент значит у нас на андроде.
 
-Для взаимодействия всего этого дела использовалась библиотека 'SocketIO'
+Для взаимодействия всего этого дела использовалась библиотека  `socket.io`
 
 ![screenshot of sample](https://miro.medium.com/fit/c/1838/551/1*tOitxCwTNcS3ESstLylmtg.png)
 
