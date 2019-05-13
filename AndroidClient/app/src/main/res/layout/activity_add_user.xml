@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".AddUserActivity">
+
+    <EditText
+        android:id="@+id/userNickName"
+        android:layout_width="200dp"
+        android:layout_height="50dp"
+        android:layout_below="@+id/textView2"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="28dp"
+        android:hint="NickName"
+        android:textAlignment="center" />
+
+    <Button
+        android:id="@+id/setNickName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/userNickName"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="30dp"
+        android:enabled="false"
+        android:text="Continue..." />
+
+
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="match_parent"
+        android:layout_height="285dp"
+        app:srcCompat="@drawable/mayushi" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/imageView2"
+        android:layout_alignStart="@+id/imageView2"
+        android:layout_alignLeft="@+id/imageView2"
+        android:layout_alignEnd="@+id/imageView2"
+        android:layout_alignRight="@+id/imageView2"
+        android:layout_marginStart="60dp"
+        android:layout_marginLeft="170dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginEnd="60dp"
+        android:layout_marginRight="182dp"
+        android:text="Даб-дабро пажаловать"
+        android:textSelectHandle="@drawable/mayushi"
+        android:textAlignment="center"
+        android:textSize="24sp" />
+
+</RelativeLayout>
