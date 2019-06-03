@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">AndroidClient</string>
+    <string name="nickname">NickName</string>
 </resources>

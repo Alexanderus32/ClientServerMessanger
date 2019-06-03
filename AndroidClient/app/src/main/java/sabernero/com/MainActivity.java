@@ -9,6 +9,8 @@ import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.ContextMenu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -40,10 +42,13 @@ public class MainActivity extends AppCompatActivity {
 
     private ListView messageListView;
     private MessageAdapter messageAdapter;
+    final String MenuItem1 = "Перейти к диалогу";
     
     private Thread thread2;
     private boolean startTyping = false;
     private int time = 2;
+
+    private ArrayList<String> UsersCount = new ArrayList<String>();
 
     private Socket mSocket;
     {
@@ -87,11 +92,15 @@ public class MainActivity extends AppCompatActivity {
             mSocket.on("connect user", onNewUser);
             mSocket.on("chat message", onNewMessage);
             mSocket.on("on typing", onTyping);
+            //mSocket.on("create", onNewChat);
+            //сделать Событие для личного чата
+
 
             JSONObject userId = new JSONObject();
             try {
                 userId.put("username", Username + " Connected");
                 mSocket.emit("connect user", userId);
+                UsersCount.add(getIntent().getStringExtra("uniqueId"));
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -106,6 +115,8 @@ public class MainActivity extends AppCompatActivity {
         textField = findViewById(R.id.textField);
         sendButton = findViewById(R.id.sendButton);
         messageListView = findViewById(R.id.messageListView);
+        /////
+        registerForContextMenu(messageListView);
 
         List<MessageFormat> messageFormatList = new ArrayList<>();
         messageAdapter = new MessageAdapter(this, R.layout.item_message, messageFormatList);
@@ -113,6 +124,68 @@ public class MainActivity extends AppCompatActivity {
 
         onTypeButtonEnable();
     }
+
+    /////
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        switch (v.getId()){
+            case R.id.messageListView:
+                menu.add(MenuItem1);
+                menu.add("Въебать");
+                menu.add("Послать на пересдачу");
+                break;
+        }
+    }
+    //хуйня. В метод даже не попадает
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        JSONObject jsonObject = new JSONObject();
+        try {
+            Log.i(TAG, "room:  "+ uniqueId);
+            jsonObject.put("username", Username+ " тупа хочет начать чат");
+            jsonObject.put("room", uniqueId);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        Log.i(TAG, "NEWROOM: 1"+ mSocket.emit("create room", jsonObject));
+
+
+        return super.onContextItemSelected(item);
+    }
+
+    //Отправка сообщения в комнату
+    public void sendRoomMessage(View view){
+        Log.i(TAG, "sendMessage: ");
+        String message = textField.getText().toString().trim();
+        if(TextUtils.isEmpty(message)){
+            Log.i(TAG, "sendMessage:2 ");
+            return;
+        }
+        textField.setText("");
+        JSONObject roomMessage = new JSONObject();
+
+
+        try {
+            roomMessage.put("username", Username);
+            roomMessage.put("message", message);
+            roomMessage.put("uniqueid", uniqueId);
+            roomMessage.put("room", uniqueId);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        Log.i(TAG, "sendRoomMessage: 1 "+mSocket.emit("room message", roomMessage));
+        //Log.i(TAG, "sendMessage: 1"+ mSocket.emit("chat message", jsonObject));
+    }
+
+    // socket.on('create room', function(room) {
+    //	socket.join(room);
+    //	io.emit('new wroom', room);
+    //});
+    //
+    // socket.on('room message', function(msg){
+    //    console.log("Message " + msg['message']);
+    //    socket.to(msg['room']).emit( 'room message', msg);
+    //  });
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
@@ -151,7 +224,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-    //событие о новом сообщении на сервак
+    //событие о новом сообщении
     Emitter.Listener onNewMessage = new Emitter.Listener() {
         @Override
         public void call(final Object... args) {
@@ -184,7 +257,7 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-    //Событие о новом пользователе на сервак
+    //Событие о новом пользователе
     Emitter.Listener onNewUser = new Emitter.Listener() {
         @Override
         public void call(final Object... args) {
@@ -211,6 +284,39 @@ public class MainActivity extends AppCompatActivity {
                     messageListView.smoothScrollToPosition(0);
                     messageListView.scrollTo(0, messageAdapter.getCount()-1);
                     Log.i(TAG, "run: " + username);
+                }
+            });
+        }
+    };
+
+
+    //Событие о новом пользователе
+    Emitter.Listener onNewChat = new Emitter.Listener() {
+        @Override
+        public void call(final Object... args) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    int length = args.length;
+
+                    if(length == 0){
+                        return;
+                    }
+                    //Here i'm getting weird error..................///////run :1 and run: 0
+                    Log.i(TAG, "chat: ");
+                    Log.i(TAG, "chat: " + args.length);
+                    String username =args[0].toString();
+                    try {
+                        JSONObject object = new JSONObject(username);
+                        username = object.getString("username");
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    MessageFormat format = new MessageFormat(null, username, " Хочет начать с вами личный чат");
+                    messageAdapter.add(format);
+                    messageListView.smoothScrollToPosition(0);
+                    messageListView.scrollTo(0, messageAdapter.getCount()-1);
+                    Log.i(TAG, "chat: " + username);
                 }
             });
         }
@@ -316,6 +422,7 @@ public class MainActivity extends AppCompatActivity {
             mSocket.off("chat message", onNewMessage);
             mSocket.off("connect user", onNewUser);
             mSocket.off("on typing", onTyping);
+           // mSocket.off("create", onNewChat);
             Username = "";
             messageAdapter.clear();
         }else {
