@@ -1,4 +1,4 @@
-## Client-server messanger
+# Client-server messanger
 
 Сервер у нас работает на Node.js и запущен на Heroku - [здесь](https://mysterious-lake-76125.herokuapp.com/)
 
@@ -6,7 +6,7 @@
 
 Для взаимодействия всего этого дела использовалась библиотека  `socket.io`
 
-# Код сервера написанного на Node.js
+## Код сервера написанного на Node.js
 ```js
 const express = require('express')
 const path = require('path')
