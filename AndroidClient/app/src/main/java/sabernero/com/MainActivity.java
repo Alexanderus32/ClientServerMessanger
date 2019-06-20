@@ -63,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
             super.handleMessage(msg);
             Log.i(TAG, "handleMessage: typing stopped " + startTyping);
             if(time == 0){
-                setTitle("Пожилой голубь");
+                setTitle("Чат");
                 Log.i(TAG, "handleMessage: typing stopped time is " + time);
                 startTyping = false;
                 time = 2;
@@ -135,8 +135,7 @@ public class MainActivity extends AppCompatActivity {
         switch (v.getId()) {
             case R.id.messageListView:
                 menu.add(MenuItem1);
-                menu.add("Въебать");
-                menu.add("Послать на пересдачу");
+                menu.add("Дать пять");
                 break;
         }
 
